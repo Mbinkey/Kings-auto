@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Kings Global</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎️</text></svg>">
+    <!-- Add to admin.html head -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; object-src 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+</head>
+<body class="admin-page">
+    <!-- Admin Header -->
+    <header class="header admin-header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">KINGS<span>GLOBAL</span> <span class="admin-badge">ADMIN</span></a>
+                <ul class="nav-menu">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Back to Site</a></li>
+                    <li><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#cars"><i class="fas fa-car"></i> Cars</a></li>
+                    <li><a href="#orders"><i class="fas fa-shopping-cart"></i> Orders <span class="notification-badge" id="orderNotificationBadge">0</span></a></li>
+                    <li><a href="#add-car"><i class="fas fa-plus-circle"></i> Add Car</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Admin Dashboard -->
+    <main class="admin-main">
+        <div class="container">
+            <!-- Dashboard Stats -->
+            <section class="dashboard-stats" id="dashboard">
+                <h2 class="section-title">Admin <span>Dashboard</span></h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalCars">0</h3>
+                            <p>Total Cars</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="availableCars">0</h3>
+                            <p>Available Cars</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalOrders">0</h3>
+                            <p>Total Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="newOrders">0</h3>
+                            <p>New Orders</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Orders -->
+            <section class="admin-section" id="orders">
+                <div class="section-header">
+                    <h2 class="section-title">Recent <span>Orders</span></h2>
+                    <button class="btn-secondary" id="markAllRead">Mark All as Read</button>
+                </div>
+                <div class="orders-table-container">
+                    <table class="orders-table" id="ordersTable">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Car</th>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="no-orders" id="noOrdersMessage">
+                    <p>No orders yet. Orders will appear here when customers submit them.</p>
+                </div>
+            </section>
+
+            <!-- Test Drive Requests Section -->
+<section class="admin-section" id="test-drives">
+    <div class="section-header">
+        <h2 class="section-title">Test Drive <span>Requests</span></h2>
+        <div class="section-actions">
+            <input type="text" id="testDriveSearch" placeholder="Search requests...">
+            <button class="btn-secondary" id="refreshTestDrives"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+    </div>
+    <div class="test-drives-table-container">
+        <table class="orders-table" id="testDrivesTable">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Car Interest</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="testDrivesTableBody">
+                <!-- Test drives will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+    <div class="no-test-drives" id="noTestDrivesMessage">
+        <p>No test drive requests yet. Requests will appear here when customers submit them.</p>
+    </div>
+</section>
+
+<!-- Test Drive Details Modal -->
+<div class="modal-overlay" id="testDriveDetailsModalOverlay">
+    <div class="modal">
+        <button class="modal-close" id="testDriveDetailsClose">&times;</button>
+        <div class="modal-content">
+            <h2>Test Drive Request Details</h2>
+            <div class="test-drive-details-admin" id="testDriveDetailsContent">
+                <!-- Test drive details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+ <!-- Car Management -->
+            <section class="admin-section" id="cars">
+                <div class="section-header">
+                    <h2 class="section-title">Car <span>Management</span></h2>
+                    <div class="section-actions">
+                        <input type="text" id="adminSearch" placeholder="Search cars...">
+                        <button class="btn-secondary" id="refreshCars"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                </div>
+                <div class="cars-table-container">
+                    <table class="cars-table" id="carsTable">
+                        <thead>
+                            <tr>
+                                <th>Car</th>
+                                <th>Brand</th>
+                                <th>Year</th>
+                                <th>Price</th>
+                                <th>Availability</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="carsTableBody">
+                            <!-- Cars will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Add/Edit Car Form -->
+            <section class="admin-section" id="add-car">
+                <div class="section-header">
+                    <h2 class="section-title" id="formTitle">Add <span>New Car</span></h2>
+                </div>
+                <div class="form-container">
+                    <form id="carForm">
+                        <input type="hidden" id="carId">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="carName">Car Name *</label>
+                                <input type="text" id="carName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="carBrand">Brand *</label>
+                                <input type="text" id="carBrand" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="carModel">Model *</label>
+                                <input type="text" id="carModel" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="carYear">Year *</label>
+                                <input type="number" id="carYear" min="2000" max="2025" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="carPrice">Price ($) *</label>
+                                <input type="number" id="carPrice" min="0" step="1000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="carMileage">Mileage *</label>
+                                <input type="number" id="carMileage" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="carEngine">Engine Type *</label>
+                                <input type="text" id="carEngine" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="carTransmission">Transmission *</label>
+                                <select id="carTransmission" required>
+                                    <option value="">Select Transmission</option>
+                                    <option value="Automatic">Automatic</option>
+                                    <option value="Manual">Manual</option>
+                                    <option value="Dual-Clutch">Dual-Clutch</option>
+                                    <option value="CVT">CVT</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="carFuel">Fuel Type *</label>
+                                <select id="carFuel" required>
+                                    <option value="">Select Fuel Type</option>
+                                    <option value="Gasoline">Gasoline</option>
+                                    <option value="Diesel">Diesel</option>
+                                    <option value="Electric">Electric</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                    <option value="Plug-in Hybrid">Plug-in Hybrid</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="carAvailability">Availability *</label>
+                                <select id="carAvailability" required>
+                                    <option value="In Stock">In Stock</option>
+                                    <option value="Sold">Sold</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="shortDescription">Short Description *</label>
+                            <textarea id="shortDescription" rows="2" maxlength="150" required></textarea>
+                            <div class="char-count"><span id="shortDescChars">0</span>/150</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="longDescription">Long Description *</label>
+                            <textarea id="longDescription" rows="5" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="carImages">Image URLs (One per line) *</label>
+                            <textarea id="carImages" rows="3" placeholder="https://example.com/car-image.jpg" required></textarea>
+                            <p class="form-help">Enter one image URL per line. First image will be used as the main display image.</p>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary" id="submitCarBtn">Add Car</button>
+                            <button type="button" class="btn-secondary" id="cancelEditBtn" style="display: none;">Cancel Edit</button>
+                            <button type="button" class="btn-secondary" id="resetFormBtn">Reset Form</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <!-- Security Panel (Hidden by default) -->
+<section class="admin-section security-section" id="security" style="display: none;">
+    <div class="section-header">
+        <h2 class="section-title">Security <span>Panel</span></h2>
+        <button class="btn-secondary" id="refreshSecurity">Refresh</button>
+    </div>
+    
+    <div class="security-stats">
+        <div class="stat-card security-stat">
+            <div class="stat-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="lastLogin">--</h3>
+                <p>Last Login</p>
+            </div>
+        </div>
+        
+        <div class="stat-card security-stat">
+            <div class="stat-icon">
+                <i class="fas fa-history"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="securityLogsCount">0</h3>
+                <p>Security Events</p>
+            </div>
+        </div>
+        
+        <div class="stat-card security-stat">
+            <div class="stat-icon">
+                <i class="fas fa-key"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="passwordAge">--</h3>
+                <p>Password Age</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="security-actions">
+        <button class="btn-secondary" id="changePasswordBtn">
+            <i class="fas fa-key"></i> Change Password
+        </button>
+        <button class="btn-secondary" id="exportDataBtn">
+            <i class="fas fa-download"></i> Export Data
+        </button>
+        <button class="btn-secondary" id="viewLogsBtn">
+            <i class="fas fa-clipboard-list"></i> View Security Logs
+        </button>
+    </div>
+</section>
+
+<!-- Change Password Modal -->
+<div class="modal-overlay" id="changePasswordModalOverlay">
+    <div class="modal">
+        <button class="modal-close" id="changePasswordClose">&times;</button>
+        <div class="modal-content">
+            <h2>Change Password</h2>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" required 
+                           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                           title="Must contain at least 8 characters, one uppercase, one lowercase, one number and one special character">
+                    <small>Minimum 8 characters with uppercase, lowercase, number, and special character</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                
+                <div class="password-strength" id="passwordStrength">
+                    <div class="strength-bar"></div>
+                    <span class="strength-text">Password strength</span>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Change Password</button>
+                    <button type="button" class="btn-secondary" id="cancelPasswordChange">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    </main>
+
+    <!-- Order Details Modal -->
+    <div class="modal-overlay" id="orderDetailsModalOverlay">
+        <div class="modal">
+            <button class="modal-close" id="orderDetailsClose">&times;</button>
+            <div class="modal-content">
+                <h2>Order Details</h2>
+                <div class="order-details" id="orderDetailsContent">
+                    <!-- Order details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Toast -->
+    <div class="toast" id="adminToast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle toast-icon"></i>
+            <p class="toast-message">Operation completed successfully!</p>
+        </div>
+    </div>
+
+    <!-- Admin Toast Notification -->
+<div class="admin-toast" id="adminToast">
+    <div class="admin-toast-content">
+        <i class="fas fa-check-circle admin-toast-icon"></i>
+        <p class="admin-toast-message">Operation completed successfully!</p>
+    </div>
+</div>
+
+<!-- Debug Panel (Remove in production) -->
+<div class="debug-panel" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; z-index: 9999;">
+    <button onclick="refreshAllData()" style="background: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-bottom: 5px;">Refresh Data</button>
+    <div id="debugInfo"></div>
+</div>
+
+<script>
+function refreshAllData() {
+    if (typeof loadDashboardStats === 'function') loadDashboardStats();
+    if (typeof loadOrders === 'function') loadOrders();
+    if (typeof loadCarsTable === 'function') loadCarsTable();
+    if (typeof loadTestDrives === 'function') loadTestDrives();
+    if (typeof updateNotificationBadge === 'function') updateNotificationBadge();
+    showAdminToast('All data refreshed', 'success');
+}
+
+// Update debug info
+setInterval(() => {
+    const testDrives = JSON.parse(localStorage.getItem('luxuryMotorsTestDrives')) || [];
+    const notifications = JSON.parse(localStorage.getItem('luxuryMotorsNotifications')) || [];
+    
+    document.getElementById('debugInfo').innerHTML = `
+        Test Drives: ${testDrives.length}<br>
+        Notifications: ${notifications.length}<br>
+        Unread: ${notifications.filter(n => !n.read).length}
+    `;
+}, 2000);
+
+<!-- Test Drive Requests -->
+<section class="admin-section" id="test-drives">
+    <div class="section-header">
+        <h2 class="section-title">Test Drive <span>Requests</span></h2>
+        <div class="section-actions">
+            <button class="btn-secondary" onclick="loadTestDrives()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Car</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="testDrivesTableBody">
+                <!-- Test drives will load here -->
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Car</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="testDrivesTableBody">
+        <!-- Test drives will load here -->
+    </tbody>
+</table>
+</script>
+
+    <script src="admin.js"></script>
+</body>
+</html>
